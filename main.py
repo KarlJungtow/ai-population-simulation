@@ -1,8 +1,16 @@
 import pandas as pd
 from openai import OpenAI
+from people import generate_person_excel
 
 # Initialize OpenAI client
 client = OpenAI()
+
+# l/u = lower bound, then upper bound
+# attributes must follow the order of Salary (l/u), Age (l/u), Years of Education (l/u), Country
+attributes = ["10000", "20000", "20", "40", "8", "16", "Germany"]
+generate_person_excel(5, attributes)
+
+
 
 # Read the personas and questions from Excel files
 persons_df = pd.read_excel('persons_sample.xlsx')
