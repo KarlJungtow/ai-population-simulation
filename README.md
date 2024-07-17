@@ -13,9 +13,18 @@ The 3 questions are 90 tokens.
 For the answers I estimated a maximum of 15 Tokens (~8 words) per answer. 
 
 Calculating with a generated population of 1000 and 100 questions the price would be:
-Request prices:                                               Output prices:
-  Creation of every person: 1000*(120+85)   = 205 000         1000*15     = 15 000            
-  Prompting the questions: 1000*100*(15+90) = 10.5*10^6       1000*100*15 = 1.5*10^6
-  Total                                     = 10.7*10^6                   = 1.5*10^6
-  Total price                               = 53.50$                      = 22.50$
-  = 76$                               
+Request prices:                                              
+  Creation of every person: 1000*(120+85)   = 205 000                    
+  Prompting the questions: 1000*100*(15+90) = 10.5*10^6       
+  Total                                     = 10.7*10^6                   
+  Total price                               = 53.50$ 
+ 
+  Output prices:
+  
+    Creation of every person:   1000*15     = 15 000
+    Prompting the questions:    1000*100*15 = 1.5*10^6
+    Total                                   = 1.5*10^6
+    Total price                             = 22.50$
+  
+  
+  Total cost  =76$                               
