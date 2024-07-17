@@ -12,8 +12,8 @@ questions_df = pd.read_excel('questions.xlsx')
 
 #--------------------------------------------------------------------------------------------------
 #Change constants here
-num_persons = 10
-num_questions = 5
+num_persons = 0
+num_questions = 10
 
 # l/u = lower bound, then upper bound
 # attributes must follow the order of Salary (l/u), Age (l/u), Years of Education (l/u), Country
@@ -22,11 +22,6 @@ attributes = ["10000", "20000", "20", "40", "8", "16", "Germany"]
 
 
 generate_person_excel(num_persons, attributes)
-
-
-# Create a copy of the persons DataFrame and add a unique ID to each person
-persons_details = persons_df.copy()
-persons_details['PersonID'] = range(1, len(persons_df) + 1)
 
 # List of sub-questions to answer
 to_answer = [
@@ -43,7 +38,6 @@ if num_persons == 0:
     num_persons = persons_df.shape[0]
 for i in range(num_persons):
     # Extract person details
-    person_id = persons_details.iloc[i]['PersonID']
     gender = persons_df.iloc[i, 0]
     salary = persons_df.iloc[i, 1]
     age = persons_df.iloc[i, 2]
@@ -86,7 +80,7 @@ for i in range(num_persons):
             responses.append(response_text.replace('\\n', '\n'))
         # Append the results to the list
         results.append({
-            "PersonID": person_id,
+            "PersonID": i+1,
             "Gender": gender,
             "Salary": salary,
             "Age": age,
