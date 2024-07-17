@@ -15,7 +15,7 @@ Gender is assumed to be either male, female or non-binary
 
 Prices are for the newest model without Batches. 
 For 1 million prompt tokens, OpenAI charges 5$. For every million tokens that ChatGPT produces they charge 15$. This means, that the total price cannot be calculated beforehand. 
-However, since the answers will probably stay short (yes, no, a percentage) a price can be estimated. 
+However, since the answers will probably stay short (yes, no, a percentage) the price can be estimated. 
 
 
 When creating a population, ChatGPT is prompted 120 tokens and will output 10-15 tokens.
