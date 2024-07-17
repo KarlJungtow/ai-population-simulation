@@ -5,21 +5,24 @@ from people import generate_person_excel
 # Initialize OpenAI client
 client = OpenAI()
 
-
-
-
-
 # Read the personas and questions from Excel files
 persons_df = pd.read_excel('persons_sample.xlsx')
 questions_df = pd.read_excel('questions.xlsx')
 
-num_persons = 2 #persons_df.shape[0]
-num_questions = 5 #questions_df.shape[0]
+
+#--------------------------------------------------------------------------------------------------
+#Change constants here
+num_persons = 10
+num_questions = 5
 
 # l/u = lower bound, then upper bound
 # attributes must follow the order of Salary (l/u), Age (l/u), Years of Education (l/u), Country
 attributes = ["10000", "20000", "20", "40", "8", "16", "Germany"]
-generate_person_excel(num_persons+1, attributes)
+#---------------------------------------------------------------------------------------------------
+
+
+generate_person_excel(num_persons, attributes)
+
 
 # Create a copy of the persons DataFrame and add a unique ID to each person
 persons_details = persons_df.copy()
@@ -29,14 +32,15 @@ persons_details['PersonID'] = range(1, len(persons_df) + 1)
 to_answer = [
     " Question: From your perspective: How likely is it, that this headline is true? Answer with a percentage, nothing else.",
     " Question: How likely would it be for you to share this headline on social media? Answer with either yes, no, don't know",
-    " Question: Assume this headline is true. Which party would benefit from it? Answer with just a number on a scale from 0 for left-wing parties to 10 for right-wing parties"
+    " Question: Assume this headline is true. Which party would benefit from it? Answer with only a number on a scale from 0 for left-wing parties to 10 for right-wing parties"
 ]
 
 # List to store results
 results = []
 
 # Iterate over each person in the DataFrame
-
+if num_persons == 0:
+    num_persons = persons_df.shape[0]
 for i in range(num_persons):
     # Extract person details
     person_id = persons_details.iloc[i]['PersonID']
@@ -58,10 +62,12 @@ for i in range(num_persons):
     # Iterate over each question in the questions DataFrame
 
 
-    for k in range(num_questions):
-        percent = (i / num_persons + k/(num_persons*num_questions)) * 100
+    for k in range(1, num_questions+1):
+        percent = (i * num_questions + k) / (num_persons * num_questions) * 100
         print(str(round(percent, 2)) + " %")
 
+        if round(percent, 2) == 20.0:
+            print("20!")
 
         question = str(questions_df.iloc[k, 1])
         responses = []
@@ -70,7 +76,7 @@ for i in range(num_persons):
         for sub_question in to_answer:
             new_question = question + sub_question
             completion = client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": person},
                     {"role": "user", "content": new_question}
@@ -92,10 +98,9 @@ for i in range(num_persons):
             "Beneficial": responses[2],
         })
 
-print("100.0 %")
-
 # Convert the list of dictionaries to a DataFrame
 results_df = pd.DataFrame(results)
 
 # Write the results DataFrame to an Excel file
 results_df.to_excel('responses_test.xlsx', index=False)
+
