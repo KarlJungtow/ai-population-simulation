@@ -5,16 +5,21 @@ from people import generate_person_excel
 # Initialize OpenAI client
 client = OpenAI()
 
-# l/u = lower bound, then upper bound
-# attributes must follow the order of Salary (l/u), Age (l/u), Years of Education (l/u), Country
-attributes = ["10000", "20000", "20", "40", "8", "16", "Germany"]
-generate_person_excel(5, attributes)
+
 
 
 
 # Read the personas and questions from Excel files
 persons_df = pd.read_excel('persons_sample.xlsx')
 questions_df = pd.read_excel('questions.xlsx')
+
+num_persons = 2 #persons_df.shape[0]
+num_questions = 5 #questions_df.shape[0]
+
+# l/u = lower bound, then upper bound
+# attributes must follow the order of Salary (l/u), Age (l/u), Years of Education (l/u), Country
+attributes = ["10000", "20000", "20", "40", "8", "16", "Germany"]
+generate_person_excel(num_persons+1, attributes)
 
 # Create a copy of the persons DataFrame and add a unique ID to each person
 persons_details = persons_df.copy()
@@ -31,11 +36,8 @@ to_answer = [
 results = []
 
 # Iterate over each person in the DataFrame
-num_persons = 3 #persons_df.shape[0]
-for i in range(num_persons):
-    percent = i / num_persons * 100
-    print(str(round(percent, 2)) + " %")
 
+for i in range(num_persons):
     # Extract person details
     person_id = persons_details.iloc[i]['PersonID']
     gender = persons_df.iloc[i, 0]
@@ -54,9 +56,13 @@ for i in range(num_persons):
     )
 
     # Iterate over each question in the questions DataFrame
-    num_questions = 1 #questions_df.shape[0]
+
 
     for k in range(num_questions):
+        percent = (i / num_persons + k/(num_persons*num_questions)) * 100
+        print(str(round(percent, 2)) + " %")
+
+
         question = str(questions_df.iloc[k, 1])
         responses = []
 
