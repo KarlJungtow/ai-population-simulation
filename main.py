@@ -6,14 +6,14 @@ from people import generate_person_excel
 client = OpenAI()
 
 # Read the personas and questions from Excel files
-persons_df = pd.read_excel('persons_sample.xlsx')
-questions_df = pd.read_excel('questions.xlsx')
+persons_df = pd.read_excel('Excel-Sheets/persons_sample.xlsx')
+questions_df = pd.read_excel('Excel-Sheets/questions.xlsx')
 
 
 #--------------------------------------------------------------------------------------------------
 #Change constants here
 num_persons = 0
-num_questions = 10
+num_questions = 1
 
 # l/u = lower bound, then upper bound
 # attributes must follow the order of Salary (l/u), Age (l/u), Years of Education (l/u), Country
@@ -96,5 +96,5 @@ for i in range(num_persons):
 results_df = pd.DataFrame(results)
 
 # Write the results DataFrame to an Excel file
-results_df.to_excel('responses_test.xlsx', index=False)
+results_df.to_excel('Excel-Sheets/responses_test.xlsx', index=False)
 
