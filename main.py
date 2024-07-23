@@ -1,5 +1,7 @@
 import pandas as pd
 from openai import OpenAI
+
+import people
 from people import generate_person_excel
 
 # Initialize OpenAI client
@@ -18,6 +20,10 @@ num_questions = 1
 # l/u = lower bound, then upper bound
 # attributes must follow the order of Salary (l/u), Age (l/u), Years of Education (l/u), Country
 attributes = ["10000", "20000", "20", "40", "8", "16", "Germany"]
+
+# When set to true, the text will be parsed and only the desired output will be saved to the excel
+# When set to false, the complete answers will be saved
+active = True
 #---------------------------------------------------------------------------------------------------
 
 
@@ -25,9 +31,9 @@ generate_person_excel(num_persons, attributes)
 
 # List of sub-questions to answer
 to_answer = [
-    " Question: From your perspective: How likely is it, that this headline is true? Answer with a percentage, nothing else.",
-    " Question: How likely would it be for you to share this headline on social media? Answer with either yes, no, don't know",
-    " Question: Assume this headline is true. Which party would benefit from it? Answer with only a number on a scale from 0 for left-wing parties to 10 for right-wing parties"
+    "From your perspective: How likely is it, that this headline is true? Answer with a percentage, nothing else",
+    "How likely would it be for you to share this headline on social media? Answer with only either yes, no, don't known",
+    "Assume this headline is true. Which party would benefit from it? Answer with only a number on a scale from 0 for left-wing parties to 10 for right-wing parties"
 ]
 
 # List to store results
@@ -58,26 +64,25 @@ for i in range(num_persons):
 
     for k in range(1, num_questions+1):
         percent = (i * num_questions + k) / (num_persons * num_questions) * 100
-        print(str(round(percent, 2)) + " %")
-
-        if round(percent, 2) == 20.0:
-            print("20!")
+        print("Progress: " + str(round(percent, 2)) + " %")
 
         question = str(questions_df.iloc[k, 1])
         responses = []
 
+        index = 0
         # Iterate over each sub-question and get the response from OpenAI
         for sub_question in to_answer:
             new_question = question + sub_question
             completion = client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": person},
                     {"role": "user", "content": new_question}
                 ]
             )
             response_text = str(completion.choices[0].message.content)
-            responses.append(response_text.replace('\\n', '\n'))
+            responses.append(people.clean_answers(response_text.replace('\\n', '\n'), index, active))
+            index += 1
         # Append the results to the list
         results.append({
             "PersonID": i+1,

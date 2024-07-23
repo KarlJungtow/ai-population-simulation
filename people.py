@@ -1,7 +1,40 @@
 import pandas as pd
 import openai
 import random
+import re
+def clean_answers(text, index, active):
+    if not active:
+        return text
 
+    if index == 0:
+        # Search for the pattern in the text
+        match = re.search(r'\d+', text)
+        # Check if a match is found
+        if match:
+            # Return the matched percentage
+            return str(match.group(0)) + "%"
+        else:
+            # Return an appropriate message if no percentage is found
+            return text
+    elif index == 1:
+        text_lower = text.lower()
+        if "don't know" in text_lower:
+            return "don't know"
+        elif "yes" in text_lower:
+            return "yes"
+        elif "no" in text_lower:
+            return "no"
+        else:
+            return text
+
+    elif index == 2:
+        match = re.search(r'\d+', text)
+        if match and int(match.group()) < 11:
+            return match.group()
+        else:
+            return text
+    else:
+        return text
 def generate_person_excel(num_persons, attributes):
     if num_persons == 0:
         return
@@ -29,7 +62,7 @@ def generate_person_excel(num_persons, attributes):
         )
 
         response = client.chat.completions.create(
-            model="gpt-4-turbo",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
@@ -44,7 +77,7 @@ def generate_person_excel(num_persons, attributes):
 
     # Generate persons
     for i in range(num_persons):
-        seed = random.randint(0, 1000000)
+        seed = random.randint(10000000, 99999999)
         person = generate_person(seed)
         persons.append(person)
 
