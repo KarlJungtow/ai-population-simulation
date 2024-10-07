@@ -2,6 +2,46 @@ import pandas as pd
 import openai
 import random
 import re
+
+
+# Extract peoples information from Stata data.
+# var "num" specifies amount. If num is greater than total number of samples, it will stop after the last person
+def extract_sample(filename, num):
+    if num == 0:
+        df = pd.read_excel("Excel-Sheets/persons_sample.xlsx")
+        return df
+    df = pd.read_excel(filename)
+
+    # Get the unique identifiers from column A
+    unique_identifiers = df['unique'].unique()
+
+    # Create a list to store the first rows of each unique identifier
+    first_rows = []
+
+    amount = 0
+    # Loop through each unique identifier
+    for identifier in unique_identifiers:
+        # Get the first row with the current unique identifier
+        first_row = df[df['unique'] == identifier].iloc[0]
+
+        # Append the first row to the list
+        first_rows.append(first_row)
+        amount += 1
+        if amount >= num:
+            break
+    # Create a DataFrame from the first rows
+    first_rows_df = pd.DataFrame(first_rows)
+
+    first_rows_df = first_rows_df.loc[:, 'unique':'true']
+    df_filtered = first_rows_df[['gender', 'profile_gross_household_EU', 'age_group', 'educ_level',
+                                 'country', 'Pol_Self_placement']]
+
+    # Return and save the DataFrame for later use
+    df_filtered.to_excel("Excel-Sheets/persons_sample.xlsx", index=False)
+    return df_filtered, amount
+
+def randomize_age(age_bracket):
+    return age_bracket
 def clean_answers(text, index, active):
     if not active:
         return text
@@ -35,6 +75,8 @@ def clean_answers(text, index, active):
             return text
     else:
         return text
+
+
 def generate_person_excel(num_persons, attributes):
     if num_persons == 0:
         return
