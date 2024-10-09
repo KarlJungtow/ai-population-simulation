@@ -9,7 +9,7 @@ import re
 def extract_sample(filename, num):
     if num == 0:
         df = pd.read_excel("Excel-Sheets/persons_sample.xlsx")
-        return df
+        return df, df.shape[1]
     df = pd.read_excel(filename)
 
     # Get the unique identifiers from column A
@@ -39,6 +39,7 @@ def extract_sample(filename, num):
     # Return and save the DataFrame for later use
     df_filtered.to_excel("Excel-Sheets/persons_sample.xlsx", index=False)
     return df_filtered, amount
+
 
 def randomize_age(age_bracket):
     return age_bracket
